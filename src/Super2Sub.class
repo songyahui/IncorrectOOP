@@ -1,0 +1,54 @@
+// Java Program to Illustrate Invocation
+// of Constructor Calling With Usage
+// of super Keyword
+
+// Class 1
+// Suoer class
+class A {
+	int x;
+
+	// Constructor of super class
+	A(int _x) { x = _x; }
+}
+
+// Class 2
+// Sub class
+class B extends A {
+
+	int y;
+
+	// Constructor of sub class
+	B(int _x, int _y)
+	{
+
+		// super keyword refers to super class
+		super(_x);
+		y = _y;
+	}
+
+	// Method of sub class
+	void Display()
+	{
+		// Print statement
+		System.out.println("x = " + x + ", y = " + y);
+	}
+}
+
+// Class 3
+// Main class
+public class Super2Sub {
+
+	// Main driver method
+	public static void main(String[] args)
+	{
+
+		// Creating object of sub class
+		// inside main() method
+		
+		A a = new A(3);
+		B b = (B) a;
+
+		// Invoking method inside main() method
+		b.Display();
+	}
+}
