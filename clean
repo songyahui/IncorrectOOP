@@ -7,6 +7,6 @@ rm lexer.ml
 rm parser.ml
 rm parser.mli
 
-rm hip
+#rrm hip
 #rm sleek
 #rm ltl

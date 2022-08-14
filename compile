@@ -10,7 +10,3 @@ ocamlc -c Pretty.ml
 
 ocamlc -c -o Forward.cmo  FrontEnd/Forward.ml
 ocamlc -o hip parser.cmo lexer.cmo Pretty.cmo  Forward.cmo
-
-
-
-
