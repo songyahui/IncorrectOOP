@@ -15,40 +15,17 @@
 %token LSPEC RSPEC ENSURE REQUIRE MODULE COLON INPUT OUTPUT
 
 
-%start full_prog specProg pRog ee ltl_p
-%type <(Ast.spec_prog) list> full_prog
-%type <Ast.spec_prog> specProg
-%type <Ast.prog> pRog
-%type <(Ast.inclusion) list > ee
-%type <(Ast.ltl) list > ltl_p
+%start full_prog 
+%type <Ast.program> full_prog
 
 
 %%
-
 full_prog:
 | EOF {[]}
-| a = specProg r = full_prog { append [a] r }
+| a = classDef SIMI r = full_prog { append [a] r }
 
-
-ee: 
-| EOF {[]}
-| a = entailment SIMI r = ee { append [a] r }
-
-ltl_p: 
-| EOF {[]}
-| a = ltl SIMI r = ltl_p { append [a] r }
-
-ltl : 
-| s = VAR {Lable s} 
-| LPAR r = ltl RPAR { r }
-| NEXT p = ltl  {Next p}
-| LPAR p1= ltl UNTIL p2= ltl RPAR {Until (p1, p2)}
-| GLOBAL p = ltl {Global p}
-| FUTURE p = ltl {Future p}
-| LTLNOT p = ltl {NotLTL p}
-| LPAR p1= ltl IMPLY p2= ltl RPAR {Imply (p1, p2)}
-| LPAR p1= ltl LILAND p2= ltl RPAR {AndLTL (p1, p2)}  
-| LPAR p1= ltl LILOR p2= ltl RPAR {OrLTL (p1, p2)}  
+classDef: 
+| {("SONG", None, [], [])}
 
 singleVAR: var = VAR {[var]}
 
