@@ -3,7 +3,6 @@ open Lexing
 open Parser
 
 exception SyntaxError of string
-
 let next_line lexbuf =
   let pos = lexbuf.lex_curr_p in
   lexbuf.lex_curr_p <-
@@ -30,28 +29,8 @@ let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 rule token = parse
 | white    { token lexbuf }
 | newline  { next_line lexbuf; token lexbuf }
-| "nothing" { NOTHING }
-| "pause" {PAUSE}  
-| "loop" {LOOP}
-| "signal" {SIGNAL}
-| "emit" {EMIT}
-| "present" {PRESENT}
-| "run" {RUN}
-| "trap" {TRAP}
-| "exit" {EXIT}
-| "emp" { EMPTY }
-| "require" {REQUIRE}
-| "ensure" {ENSURE}
-| "module" {MODULE}
-| "input" {INPUT}
-| "output" {OUTPUT}
-| "end" {END}
-| "in" {IN}
-| "then" {THEN}
+| "class" {CLASS}
 | "else" {ELSE}
-| "abort" {ABORT} 
-| "when" {WHEN}
-| 'w' {OMEGA}
 | '(' { LPAR }
 | ')' { RPAR }
 | '{' { LBRACK  }
@@ -59,74 +38,17 @@ rule token = parse
 | ';' { SIMI }
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 | '.' { CONCAT }
-| "||" { PAR }
-| 'X' {NEXT}
-| 'U' {UNTIL}
 | id as str { VAR str }
 | "|-" {ENTIL}
 | "\\/" {DISJ}
 | ',' { COMMA }
 | ':' { COLON }
-| '^' { POWER }
 | '*' {KLEENE}
-
-| "<>" {FUTURE}  
-
-| "->" {IMPLY}
-| '!' {LTLNOT}
-
-| "&&" {LILAND}
-| "||" {LILOR}
 
 | "/*@" {LSPEC}
 | "@*/" {RSPEC}
 | eof { EOF }
 
-(*
-
-
-| '[' { LBrackets }
-| ']' { RBrackets }
-| "TRUE" { TRUE }
-| "FALSE" { FALSE }
-| "if" {IF}
-| "else" {ELSE}
-
-| "[]" {GLOBAL}
-| "include" {INCLUDE}
-| "true" { TRUEE (bool_of_string (Lexing.lexeme lexbuf))}
-| "false" { FALSEE (bool_of_string (Lexing.lexeme lexbuf))}
-| '"'      { read_string (Buffer.create 17) lexbuf }
-| ">=" {GTEQ}
-| "<=" {LTEQ}
-| '>' {GT}
-| '<' {LT}
-| '=' {EQ}
-
-| '|' { CHOICE }
-
-| '"' { read_string (Buffer.create 17) lexbuf }
-
-| '[' { LBrackets }
-| ']' { RBrackets }
-| '{' { LBRACK  }
-| '}' { RBRACK }
-
-
-| '+' { PLUS }
-| '-' { MINUS }
-| '#' { SHARP }
-
-
-| '~' {NEGATION}
-
-
-| "/\\" {CONJ}
-| "==" {EQEQ}
-| ">=" {GTEQ}
-| "<=" {LTEQ}
-
-*)
 | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
 

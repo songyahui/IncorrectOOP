@@ -4,15 +4,12 @@
 
 %token <string> VAR
 %token <int> INTE
-%token NOTHING PAUSE PAR  LOOP SIGNAL LPAR RPAR EMIT PRESENT TRAP EXIT SIMI
+%token LPAR RPAR  SIMI
 
 %token EOF ENTIL EMPTY DISJ COMMA CONCAT  KLEENE END IN RUN OMEGA
-%token THEN ELSE ABORT WHEN LBRACK RBRACK POWER
-(* LBrackets  RBrackets POWER*)
-%left CONCAT DISJ PAR SIMI
-(* %right SIMI PAR *)
-%token FUTURE GLOBAL IMPLY LTLNOT NEXT UNTIL LILAND LILOR 
-%token LSPEC RSPEC ENSURE REQUIRE MODULE COLON INPUT OUTPUT
+%token THEN ELSE LBRACK RBRACK 
+%token LSPEC RSPEC  COLON 
+%token CLASS
 
 
 %start full_prog 
@@ -22,11 +19,12 @@
 %%
 full_prog:
 | EOF {[]}
-| a = classDef SIMI r = full_prog { append [a] r }
+| a = classDef r = full_prog { append [a] r }
 
 classDef: 
-| {("SONG", None, [], [])}
+| CLASS var = VAR LBRACK RBRACK {(var, None, [], [])}
 
+(*
 singleVAR: var = VAR {[var]}
 
 existVar:
@@ -101,3 +99,5 @@ specProg:
   END MODULE
   {(nm, [], outs, Instance [], Kleene (Instance []), p)}
 
+
+*)
