@@ -2,14 +2,15 @@
 %{ open List %}
 
 
-%token <string> VAR
+%token <string> VAR 
+%token <string> UPPERCASEVAR
 %token <int> INTE
 %token LPAR RPAR  SIMI
 
 %token EOF ENTIL EMPTY DISJ COMMA CONCAT  KLEENE END IN RUN OMEGA
 %token THEN ELSE LBRACK RBRACK 
 %token LSPEC RSPEC  COLON 
-%token CLASS
+%token CLASS EXTENDS TypeInt TypeBool TypeVoid OVERRIDE VIRTUAL INHERIT
 
 
 %start full_prog 
@@ -21,8 +22,70 @@ full_prog:
 | EOF {[]}
 | a = classDef r = full_prog { append [a] r }
 
+extendinng:
+| {None}
+| EXTENDS  var = UPPERCASEVAR {Some var}
+
+tau:
+| TypeInt {Int}
+| TypeBool {Bool}
+| TypeVoid {Void}
+| var = UPPERCASEVAR {Class var}
+
+
+
+metyTYPE:
+| OVERRIDE {Overide}
+| VIRTUAL {Virtual}
+| INHERIT {Inherit}
+
+formalA :
+| t= tau var=VAR {(t, var)}
+
+formalARGUMENTS: 
+| obj = separated_list (COMMA, formalA) {obj}
+
+maybeCOnstructor:
+| {None}
+| var=VAR {Some var }
+
+objectContent:
+| {([], [])}
+| t = tau var=VAR SIMI rest = objectContent {
+  let (restL, restR) = rest in 
+  ((t, var)::restL, restR)
+  }
+| mtype=metyTYPE t = tau mn= maybeCOnstructor 
+  LPAR formargues = formalARGUMENTS RPAR  
+  LBRACK 
+  RBRACK 
+  rest = objectContent {
+  let (restL, restR) = rest in 
+  let var = match mn with 
+  | None -> "constructor"
+  | Some var -> var 
+  in 
+  (restL, (mtype, t, var, formargues, Value (Skip) ):: restR)
+  }
+| t = tau mn= maybeCOnstructor 
+  LPAR formargues = formalARGUMENTS RPAR  
+  LBRACK 
+  RBRACK 
+  rest = objectContent {
+  let (restL, restR) = rest in 
+    let var = match mn with 
+  | None -> "constructor"
+  | Some var -> var 
+  in 
+  (restL, (Origin, t, var, formargues, Value (Skip) ):: restR)
+  }
+
+
+
 classDef: 
-| CLASS var = VAR LBRACK RBRACK {(var, None, [], [])}
+| CLASS var = UPPERCASEVAR ext = extendinng LBRACK 
+ content = objectContent
+RBRACK {let (formalArgs, classMeth) = content in (var, ext, formalArgs, classMeth)}
 
 (*
 singleVAR: var = VAR {[var]}

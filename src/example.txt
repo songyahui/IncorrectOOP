@@ -21,15 +21,15 @@ class Subtype extends Supertype {
 	  Object o ;
 	  o = new Object()
       return o;
-    }
+    
   }
-	@virtual
+	@Virtual
 	void test4b(Supertype o) {
     m = o.foo()
 	m.toString();
 	
   }
-	@virtual
+	@Virtual
 	void dynamicDispatchShouldReportWhenCalledWithSubtypeParameterBad_FN(Subtype o) {
     test4b(o);
   }
@@ -42,19 +42,19 @@ class Interface {
   }
 
 class Impl extends Interface {
-    @inherit
+    @Inherit
 	Object foo() {
       return null;
     }
 	
-	@virtual
+	@Virtual
 	void test1() {
     Interface i; 
 	i = new Impl();
     a = i.foo(); 
     a.toString();  
   }
-	@virtual
+	@Virtual
     void test2(Interface i) {
     a = i.foo();
     a.toString();
@@ -64,11 +64,11 @@ class Impl extends Interface {
 class WithField {
 
     Supertype mField;
-	@virtual
+	@Virtual
     WithField(Supertype t) {
       mField = t;
     }
-    @virtual
+    @Virtual
     void test7b() {
       Supertype subtype;
 	  subtype= new Subtype();
@@ -76,7 +76,7 @@ class WithField {
 	  object = new WithField(subtype);
       object.mField.bar().toString();
     }
-    @virtual
+    @Virtual
     void test7a() {
       Supertype subtype;
 	  subtype = new Subtype();

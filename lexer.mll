@@ -23,14 +23,21 @@ let float = digit* frac? exp?
 (* part 3 *)
 let white = [' ' '\t']+
 let newline = '\n' | '\r' | "\r\n" 
-let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
-
+let id = ['a'-'z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
+let className = ['A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 rule token = parse
 | white    { token lexbuf }
 | newline  { next_line lexbuf; token lexbuf }
 | "class" {CLASS}
+| "extends" {EXTENDS}
 | "else" {ELSE}
+| "int" {TypeInt}
+| "bool" {TypeBool}
+| "void" {TypeVoid}
+| "@Override" {OVERRIDE}
+| "@Virtual" {VIRTUAL}
+| "@Inherit" {INHERIT}
 | '(' { LPAR }
 | ')' { RPAR }
 | '{' { LBRACK  }
@@ -39,6 +46,7 @@ rule token = parse
 | int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 | '.' { CONCAT }
 | id as str { VAR str }
+| className as str {UPPERCASEVAR str}
 | "|-" {ENTIL}
 | "\\/" {DISJ}
 | ',' { COMMA }
