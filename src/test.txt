@@ -1,0 +1,90 @@
+class Supertype {
+    Object foo() {
+      Object o ;
+	    o = new Object(); 
+      return o;
+    }
+
+    Object bar() {
+      return null;
+    }
+  }
+
+class Subtype extends Supertype {
+    @Override
+    Object foo() {
+      return null;
+    }
+
+    @Override
+    Object bar() {
+	  Object o ;
+	  o = new Object();
+      return o;
+    
+  }
+	@Virtual
+	void test4b(Supertype o) {
+    m = o.foo();
+	m.toString();
+	
+  }
+	@Virtual
+	void dynamicDispatchShouldReportWhenCalledWithSubtypeParameterBad_FN(Subtype o) {
+    test4b(o);
+  }
+}
+
+class Interface {
+    Object foo() {
+		return null;
+	}
+  }
+
+class Impl extends Interface {
+    @Inherit
+	Object foo() {
+      return null;
+    }
+	
+	@Virtual
+	void test1() {
+    Interface i; 
+	  i = new Impl();
+    a = i.foo(); 
+    a.toString();  
+  }
+	@Virtual
+    void test2(Interface i) {
+    a = i.foo();
+    a.toString();
+  }
+}
+
+class WithField {
+
+    Supertype mField;
+	@Virtual
+    WithField(Supertype t) {
+      mField = t;
+    }
+    @Virtual
+    void test7b() {
+      Supertype subtype;
+	  subtype= new Subtype();
+      WithField object;
+	  object = new WithField(subtype);
+      x = object.mField.bar();
+      x.toString();
+    }
+    
+    @Virtual
+    void test7a() {
+      Supertype subtype;
+	  subtype = new Subtype();
+      WithField object;
+	  object = new WithField(subtype);
+      x = object.mField.bar();
+      x.toString();
+    }
+  }
