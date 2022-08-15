@@ -8,16 +8,16 @@ type dynamic = spec
 
 type tau = Int | Bool | Void | Class of class_name
 
-type constant = INT of int | BOOL of bool | VOID
-
-type value = Skip | Const of constant | Null | Variable of var
+type value = INT of int | BOOL of bool | Null | Variable of var
 
 type field = var * (var list)
 
 type expression = 
+        | Skip
+        | Return of value 
         | Value of value
-        | Assign of (var * value)
-        | AssignField of (field * value)
+        | Assign of (var * expression)
+        | AssignField of (field * expression)
         | Casting of class_name * value
         | NewObj of class_name * (var list)
         | Call of field * (var list)

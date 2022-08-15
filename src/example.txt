@@ -1,7 +1,7 @@
 class Supertype {
     Object foo() {
       Object o ;
-	  o = new Object()
+	    o = new Object(); 
       return o;
     }
 
@@ -19,13 +19,13 @@ class Subtype extends Supertype {
     @Override
     Object bar() {
 	  Object o ;
-	  o = new Object()
+	  o = new Object();
       return o;
     
   }
 	@Virtual
 	void test4b(Supertype o) {
-    m = o.foo()
+    m = o.foo();
 	m.toString();
 	
   }
@@ -50,7 +50,7 @@ class Impl extends Interface {
 	@Virtual
 	void test1() {
     Interface i; 
-	i = new Impl();
+	  i = new Impl();
     a = i.foo(); 
     a.toString();  
   }

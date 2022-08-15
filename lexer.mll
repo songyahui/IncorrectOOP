@@ -31,10 +31,15 @@ rule token = parse
 | newline  { next_line lexbuf; token lexbuf }
 | "class" {CLASS}
 | "extends" {EXTENDS}
+| "true" {TRUE}
+| "false" {FALSE}
+| "null" {NULL}
+| "return" {RETURN}
 | "else" {ELSE}
 | "int" {TypeInt}
 | "bool" {TypeBool}
 | "void" {TypeVoid}
+| "new" {NEW}
 | "@Override" {OVERRIDE}
 | "@Virtual" {VIRTUAL}
 | "@Inherit" {INHERIT}
@@ -51,7 +56,7 @@ rule token = parse
 | "\\/" {DISJ}
 | ',' { COMMA }
 | ':' { COLON }
-| '*' {KLEENE}
+| '=' {EQUAL}
 
 | "/*@" {LSPEC}
 | "@*/" {RSPEC}

@@ -7,11 +7,11 @@
 %token <int> INTE
 %token LPAR RPAR  SIMI
 
-%token EOF ENTIL EMPTY DISJ COMMA CONCAT  KLEENE END IN RUN OMEGA
+%token EOF ENTIL EMPTY DISJ COMMA CONCAT  EQUAL END IN RUN OMEGA
 %token THEN ELSE LBRACK RBRACK 
 %token LSPEC RSPEC  COLON 
 %token CLASS EXTENDS TypeInt TypeBool TypeVoid OVERRIDE VIRTUAL INHERIT
-
+%token TRUE FALSE  NULL RETURN NEW
 
 %start full_prog 
 %type <Ast.program> full_prog
@@ -49,6 +49,41 @@ maybeCOnstructor:
 | {None}
 | var=VAR {Some var }
 
+expression_shell:
+| {Skip}
+| expr = expression SIMI obj = expression_shell {
+  Sequence (expr, obj)}
+  
+
+
+literal: 
+| n = INTE {INT n}
+| TRUE {BOOL true}
+| FALSE {BOOL false}
+| NULL {Null}
+| var = VAR {Variable var}
+
+maybeContinue:
+| {None}
+| CONCAT obj = separated_list(CONCAT, VAR) {Some obj}
+
+
+expression:
+| v = literal {Value v}
+| t = tau var = VAR {Declear (t, var)}
+| RETURN v = literal {Return v}
+| var = VAR access= maybeContinue EQUAL v = expression  {
+  match access with 
+  | None -> Assign (var, v)
+  | Some obj -> AssignField((var, obj), v)
+  }
+| NEW c = UPPERCASEVAR LPAR realargues = separated_list(COMMA, VAR) RPAR   {NewObj (c, realargues) }
+| var = VAR access= maybeContinue LPAR realargues = separated_list(COMMA, VAR) RPAR 
+  {match access with 
+  |None -> Call ((var, []), realargues) 
+  |Some obj -> Call ((var, obj), realargues)}
+
+
 objectContent:
 | {([], [])}
 | t = tau var=VAR SIMI rest = objectContent {
@@ -58,6 +93,7 @@ objectContent:
 | mtype=metyTYPE t = tau mn= maybeCOnstructor 
   LPAR formargues = formalARGUMENTS RPAR  
   LBRACK 
+  p = expression_shell
   RBRACK 
   rest = objectContent {
   let (restL, restR) = rest in 
@@ -65,11 +101,12 @@ objectContent:
   | None -> "constructor"
   | Some var -> var 
   in 
-  (restL, (mtype, t, var, formargues, Value (Skip) ):: restR)
+  (restL, (mtype, t, var, formargues, p):: restR)
   }
 | t = tau mn= maybeCOnstructor 
   LPAR formargues = formalARGUMENTS RPAR  
   LBRACK 
+  p = expression_shell
   RBRACK 
   rest = objectContent {
   let (restL, restR) = rest in 
@@ -77,7 +114,7 @@ objectContent:
   | None -> "constructor"
   | Some var -> var 
   in 
-  (restL, (Origin, t, var, formargues, Value (Skip) ):: restR)
+  (restL, (Origin, t, var, formargues, p):: restR)
   }
 
 
