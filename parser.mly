@@ -7,11 +7,12 @@
 %token <int> INTE
 %token LPAR RPAR  SIMI
 
-%token EOF ENTIL EMPTY DISJ COMMA CONCAT  EQUAL END IN RUN OMEGA
-%token THEN ELSE LBRACK RBRACK 
-%token LSPEC RSPEC  COLON 
+%token EOF ENTIL EMPTY DISJ COMMA CONCAT  EQUAL END IN RUN OMEGA CONJ
+%token LBRACK RBRACK PLUS MINUS
+%token LSPEC RSPEC  COLON  TILDE INFIXOP0
 %token CLASS EXTENDS TypeInt TypeBool TypeVoid OVERRIDE VIRTUAL INHERIT
-%token TRUE FALSE  NULL RETURN NEW
+%token TRUE FALSE  NULL RETURN NEW GREATER LESSEQ GreaterEQ
+%token OPEN CLOSE REQUIERES ENSURES  IMPLICATION  LESS
 
 %start full_prog 
 %type <Ast.program> full_prog
@@ -55,7 +56,6 @@ expression_shell:
   Sequence (expr, obj)}
   
 
-
 literal: 
 | n = INTE {INT n}
 | TRUE {BOOL true}
@@ -83,6 +83,28 @@ expression:
   |None -> Call ((var, []), realargues) 
   |Some obj -> Call ((var, obj), realargues)}
 
+pure_formula_term:
+  | n = INTE { let (i, _) = n in Num (int_of_string i) }
+  | v = VAR { Var v }
+  | pure_formula_term PLUS pure_formula_term { Plus ($1, $3) }
+  | pure_formula_term MINUS pure_formula_term { Minus ($1, $3) }
+  | LPAR pure_formula_term RPAR { $2 }
+
+pure_formula:
+  | TRUE { True }
+  | FALSE { False }
+  | a = pure_formula_term LESS b = pure_formula_term { Atomic (LT, a, b) }
+  | a = pure_formula_term GREATER b = pure_formula_term { Atomic (GT, a, b) }
+  | a = pure_formula_term LESSEQ b = pure_formula_term { Atomic (LTEQ, a, b) }
+  | a = pure_formula_term GreaterEQ b = pure_formula_term { Atomic (GTEQ, a, b) }
+
+  | pure_formula CONJ pure_formula { And ($1, $3) }
+  | pure_formula DISJ pure_formula { Or ($1, $3) }
+  | pure_formula IMPLICATION pure_formula { Imply ($1, $3) }
+  | TILDE pure_formula { Not ($2) }
+
+specification: 
+| {[]}
 
 objectContent:
 | {([], [])}
@@ -92,6 +114,10 @@ objectContent:
   }
 | mtype=metyTYPE t = tau mn= maybeCOnstructor 
   LPAR formargues = formalARGUMENTS RPAR  
+  OPEN 
+REQUIERES COLON spec_pre = specification
+ENSURES COLON 
+CLOSE
   LBRACK 
   p = expression_shell
   RBRACK 
@@ -101,10 +127,14 @@ objectContent:
   | None -> "constructor"
   | Some var -> var 
   in 
-  (restL, (mtype, t, var, formargues, p):: restR)
+  (restL, (mtype, t, var, formargues, spec_pre, [], p):: restR)
   }
 | t = tau mn= maybeCOnstructor 
   LPAR formargues = formalARGUMENTS RPAR  
+  OPEN 
+REQUIERES COLON spec_pre = specification
+ENSURES COLON 
+CLOSE
   LBRACK 
   p = expression_shell
   RBRACK 
@@ -114,13 +144,14 @@ objectContent:
   | None -> "constructor"
   | Some var -> var 
   in 
-  (restL, (Origin, t, var, formargues, p):: restR)
+  (restL, (Origin, t, var, formargues, spec_pre, [], p):: restR)
   }
 
 
 
 classDef: 
-| CLASS var = UPPERCASEVAR ext = extendinng LBRACK 
+| CLASS var = UPPERCASEVAR ext = extendinng 
+LBRACK 
  content = objectContent
 RBRACK {let (formalArgs, classMeth) = content in (var, ext, formalArgs, classMeth)}
 

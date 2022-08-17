@@ -35,14 +35,21 @@ rule token = parse
 | "false" {FALSE}
 | "null" {NULL}
 | "return" {RETURN}
-| "else" {ELSE}
 | "int" {TypeInt}
 | "bool" {TypeBool}
 | "void" {TypeVoid}
 | "new" {NEW}
+| "requires" {REQUIERES}
+| "ensures" {ENSURES}
 | "@Override" {OVERRIDE}
 | "@Virtual" {VIRTUAL}
 | "@Inherit" {INHERIT}
+| "/*@" { OPEN }
+| "@*/" { CLOSE }
+| '+' {PLUS}
+| "=>"
+      { IMPLICATION }
+| '-' {MINUS}
 | '(' { LPAR }
 | ')' { RPAR }
 | '{' { LBRACK  }
@@ -54,9 +61,17 @@ rule token = parse
 | className as str {UPPERCASEVAR str}
 | "|-" {ENTIL}
 | "\\/" {DISJ}
+| "/\\" {CONJ}
+| ">"  { GREATER }
 | ',' { COMMA }
 | ':' { COLON }
 | '=' {EQUAL}
+| "~"
+      { TILDE }
+| "<"  { LESS }
+| "<="  { LESSEQ } 
+| ">="  { GreaterEQ }
+
 
 | "/*@" {LSPEC}
 | "@*/" {RSPEC}

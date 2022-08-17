@@ -2,8 +2,6 @@ type var = string  (*name of the signal e.g., A B C*)
 type class_name = string
 type mn = string
 
-
-
 type tau = Int | Bool | Void | Class of class_name
 
 type value = INT of int | BOOL of bool | Null | Variable of var
@@ -57,3 +55,4 @@ type formalArguments = ((tau * var) list)
 type classMeth = mType * tau * mn * formalArguments  * static * dynamic * expression 
 type classDefinition = class_name * (class_name option) * formalArguments * (classMeth list) 
 type program = classDefinition list 
+
