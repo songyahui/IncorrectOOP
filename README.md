@@ -2,4 +2,4 @@
 
 
 ./compile
-.hip src/test.txt
+./hip src/test.txt
