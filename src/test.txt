@@ -1,5 +1,7 @@
 class Supertype {
-    Object foo() {
+    Object foo() 
+    /*@ requires: true @*/
+    {
       Object o ;
 	    o = new Object(); 
       return o;
